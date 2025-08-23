@@ -10,6 +10,7 @@ import {
   Book,
   ChevronRight,
   ChevronLeft,
+  Settings,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CommandPalette } from "@/components/CommandPalette"
@@ -59,6 +60,7 @@ interface NotionSidebarProps {
   navigationData: Classe[]
   isCollapsed?: boolean
   onToggle?: () => void
+  onMobileClose?: () => void
   className?: string
 }
 
@@ -67,6 +69,7 @@ export function NotionSidebar({
   navigationData,
   isCollapsed = false,
   onToggle,
+  onMobileClose,
   className
 }: NotionSidebarProps) {
   const router = useRouter()
@@ -89,6 +92,13 @@ export function NotionSidebar({
       icon: <Home className="h-4 w-4" />,
       href: "/dashboard",
       type: "dashboard"
+    },
+    {
+      id: "settings",
+      name: "Paramètres",
+      icon: <Settings className="h-4 w-4" />,
+      href: "/settings",
+      type: "settings"
     },
     ...navigationData.map((classe) => ({
       id: classe.id,
@@ -114,6 +124,10 @@ export function NotionSidebar({
   const handleTreeSelect = (item: TreeItem) => {
     if (item.href) {
       router.push(item.href)
+      // Fermer la sidebar mobile après navigation
+      if (onMobileClose) {
+        onMobileClose()
+      }
     }
   }
 
@@ -264,7 +278,7 @@ export function NotionSidebar({
       className
     )}>
       {/* Logo Header */}
-      <div className="flex items-center justify-center p-4 border-b border-border">
+      <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center">
           {/* Logo pour le mode clair */}
           <Image
@@ -285,6 +299,15 @@ export function NotionSidebar({
             priority
           />
         </div>
+        {/* Bouton de fermeture pour mobile */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onMobileClose}
+          className="lg:hidden h-8 w-8"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
       </div>
 
       {/* Quick Actions */}
@@ -331,7 +354,7 @@ export function NotionSidebar({
           variant="ghost"
           size="sm"
           onClick={onToggle}
-          className="w-full justify-start h-8 text-xs text-muted-foreground"
+          className="w-full justify-start h-8 text-xs text-muted-foreground lg:flex hidden"
         >
           <ChevronLeft className="mr-2 h-3 w-3" />
           Réduire

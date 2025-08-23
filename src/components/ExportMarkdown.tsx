@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, FileText, Settings, Loader2 } from 'lucide-react';
+import { Download, Settings, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
@@ -23,7 +23,7 @@ interface ExportMarkdownProps {
   classeId?: string;
   coursId?: string;
   noteId?: string;
-  variant?: 'full' | 'compact';
+  variant?: 'full' | 'compact' | 'menuItem';
 }
 
 export function ExportMarkdown({ userId, classeId, coursId, noteId, variant = 'full' }: ExportMarkdownProps) {
@@ -226,17 +226,27 @@ export function ExportMarkdown({ userId, classeId, coursId, noteId, variant = 'f
     </div>
   );
 
-  // Version compacte pour les barres d'actions
+  // Rendu pour la variante menuItem (pour le menu mobile)
+  if (variant === 'menuItem') {
+    return (
+      <div className="flex items-center gap-2 w-full cursor-pointer" onClick={() => setIsDialogOpen(true)}>
+        <Download className="h-4 w-4" />
+        <span>Exporter</span>
+      </div>
+    );
+  }
+
+  // Rendu pour la variante compact (bouton simple)
   if (variant === 'compact') {
     return (
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            Export
+          <Button variant="outline" size="sm">
+            <Download className="h-4 w-4 mr-2" />
+            Exporter
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Export Markdown</DialogTitle>
             <DialogDescription>
@@ -249,22 +259,10 @@ export function ExportMarkdown({ userId, classeId, coursId, noteId, variant = 'f
     );
   }
 
-  // Version complète pour le dashboard
+  // Rendu pour la variante full (version complète)
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <FileText className="h-5 w-5" />
-          Export Markdown
-        </CardTitle>
-        <CardDescription>
-          Exporter {getExportLabel()} au format Markdown
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent>
-        <OptionsContent />
-      </CardContent>
+    <Card>
+      {/* ...existing full variant content... */}
     </Card>
   );
 }

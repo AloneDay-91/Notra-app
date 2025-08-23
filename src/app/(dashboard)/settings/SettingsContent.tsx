@@ -173,37 +173,37 @@ export default function SettingsContent({ user }: SettingsContentProps) {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="max-w-4xl mx-auto space-y-8 p-6">
-        {/* Header */}
+      <div className="max-w-4xl mx-auto space-y-6 lg:space-y-8 p-3 sm:p-4 lg:p-6">
+        {/* Header - responsive */}
         <div>
-          <h1 className="text-3xl font-bold">Paramètres</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl lg:text-3xl font-bold">Paramètres</h1>
+          <p className="text-sm lg:text-base text-muted-foreground mt-2">
             Gérez votre compte et vos préférences
           </p>
         </div>
 
-        {/* Profile Section */}
+        {/* Profile Section - responsive */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <User className="h-5 w-5" />
               Profil utilisateur
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm">
               Informations de votre compte personnel
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
+          <CardContent className="space-y-4 lg:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <Avatar className="h-16 w-16 mx-auto sm:mx-0">
                 <AvatarImage src={avatarUrl} />
                 <AvatarFallback className="text-lg">
                   {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <h3 className="font-medium text-lg">{user.name || "Utilisateur"}</h3>
-                <p className="text-muted-foreground">{user.email}</p>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="font-medium text-base lg:text-lg">{user.name || "Utilisateur"}</h3>
+                <p className="text-sm text-muted-foreground">{user.email}</p>
                 <p className="text-xs text-muted-foreground mt-1">
                   Avatar fourni par Gravatar
                 </p>
@@ -211,7 +211,7 @@ export default function SettingsContent({ user }: SettingsContentProps) {
               <Button
                 variant="outline"
                 onClick={() => setIsEditingProfile(true)}
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
               >
                 <Edit className="h-4 w-4" />
                 Modifier
@@ -220,30 +220,32 @@ export default function SettingsContent({ user }: SettingsContentProps) {
 
             {isEditingProfile && (
               <div className="space-y-4 p-4 border rounded-lg bg-accent/5">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nom</Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Votre nom"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nom</Label>
+                    <Input
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Votre nom"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="votre@email.com"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="votre@email.com"
-                  />
-                </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     onClick={handleUpdateProfile}
                     disabled={isLoading}
-                    className="gap-2"
+                    className="gap-2 w-full sm:w-auto"
                   >
                     <Save className="h-4 w-4" />
                     {isLoading ? "Sauvegarde..." : "Sauvegarder"}
@@ -255,6 +257,7 @@ export default function SettingsContent({ user }: SettingsContentProps) {
                       setName(user.name || "")
                       setEmail(user.email || "")
                     }}
+                    className="w-full sm:w-auto"
                   >
                     Annuler
                   </Button>
@@ -264,67 +267,75 @@ export default function SettingsContent({ user }: SettingsContentProps) {
           </CardContent>
         </Card>
 
-        {/* Security Section */}
+        {/* Security Section - responsive */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <Key className="h-5 w-5" />
               Sécurité
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm">
               Gérez la sécurité de votre compte
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-4">
+              <div className="text-center sm:text-left">
                 <h4 className="font-medium">Mot de passe</h4>
                 <p className="text-sm text-muted-foreground">
                   Modifiez votre mot de passe de connexion
                 </p>
               </div>
-              <Button variant="outline" onClick={() => setIsChangePasswordOpen(true)}>
+              <Button
+                variant="outline"
+                onClick={() => setIsChangePasswordOpen(true)}
+                className="w-full sm:w-auto"
+              >
                 Changer le mot de passe
               </Button>
             </div>
 
             {isChangePasswordOpen && (
               <div className="space-y-4 p-4 border rounded-lg bg-accent/5">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Mot de passe actuel</Label>
-                  <Input
-                    id="current-password"
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Entrez votre mot de passe actuel"
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password">Mot de passe actuel</Label>
+                    <Input
+                      id="current-password"
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Entrez votre mot de passe actuel"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="new-password">Nouveau mot de passe</Label>
+                      <Input
+                        id="new-password"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="Entrez votre nouveau mot de passe"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm-password">Confirmer le nouveau mot de passe</Label>
+                      <Input
+                        id="confirm-password"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirmez votre nouveau mot de passe"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">Nouveau mot de passe</Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Entrez votre nouveau mot de passe"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirmer le nouveau mot de passe</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirmez votre nouveau mot de passe"
-                  />
-                </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     onClick={handleChangePassword}
                     disabled={isLoading}
-                    className="gap-2"
+                    className="gap-2 w-full sm:w-auto"
                   >
                     <Save className="h-4 w-4" />
                     {isLoading ? "Modification..." : "Modifier le mot de passe"}
@@ -337,6 +348,7 @@ export default function SettingsContent({ user }: SettingsContentProps) {
                       setNewPassword("")
                       setConfirmPassword("")
                     }}
+                    className="w-full sm:w-auto"
                   >
                     Annuler
                   </Button>
@@ -346,36 +358,40 @@ export default function SettingsContent({ user }: SettingsContentProps) {
           </CardContent>
         </Card>
 
-        {/* Actions Section */}
+        {/* Actions Section - responsive */}
         <Card>
           <CardHeader>
-            <CardTitle>Actions du compte</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg lg:text-xl">Actions du compte</CardTitle>
+            <CardDescription className="text-sm">
               Actions importantes concernant votre compte
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-4">
               <div className="flex items-center gap-3">
-                <LogOut className="h-5 w-5 text-muted-foreground" />
-                <div>
+                <LogOut className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                <div className="text-center sm:text-left">
                   <h4 className="font-medium">Se déconnecter</h4>
                   <p className="text-sm text-muted-foreground">
                     Déconnectez-vous de votre session actuelle
                   </p>
                 </div>
               </div>
-              <Button variant="outline" onClick={handleSignOut}>
+              <Button
+                variant="outline"
+                onClick={handleSignOut}
+                className="w-full sm:w-auto"
+              >
                 Se déconnecter
               </Button>
             </div>
 
             <Separator />
 
-            <div className="flex items-center justify-between p-4 border border-destructive/20 rounded-lg bg-destructive/5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-destructive/20 rounded-lg bg-destructive/5 gap-4">
               <div className="flex items-center gap-3">
-                <Trash2 className="h-5 w-5 text-destructive" />
-                <div>
+                <Trash2 className="h-5 w-5 text-destructive flex-shrink-0" />
+                <div className="text-center sm:text-left">
                   <h4 className="font-medium text-destructive">Supprimer le compte</h4>
                   <p className="text-sm text-muted-foreground">
                     Supprimez définitivement votre compte et toutes vos données
@@ -384,26 +400,30 @@ export default function SettingsContent({ user }: SettingsContentProps) {
               </div>
               <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="destructive">
+                  <Button
+                    variant="destructive"
+                    className="w-full sm:w-auto"
+                  >
                     Supprimer le compte
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="mx-4 max-w-md">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-destructive">
                       <AlertTriangle className="h-5 w-5" />
                       Supprimer le compte
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="text-sm">
                       Cette action est irréversible. Toutes vos classes, cours et notes seront définitivement supprimés.
                       Êtes-vous absolument sûr de vouloir continuer ?
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="flex justify-end gap-2">
+                  <div className="flex flex-col sm:flex-row justify-end gap-2">
                     <Button
                       variant="outline"
                       onClick={() => setIsDeleteDialogOpen(false)}
                       disabled={isLoading}
+                      className="w-full sm:w-auto"
                     >
                       Annuler
                     </Button>
@@ -411,6 +431,7 @@ export default function SettingsContent({ user }: SettingsContentProps) {
                       variant="destructive"
                       onClick={handleDeleteAccount}
                       disabled={isLoading}
+                      className="w-full sm:w-auto"
                     >
                       {isLoading ? "Suppression..." : "Supprimer définitivement"}
                     </Button>
@@ -422,5 +443,5 @@ export default function SettingsContent({ user }: SettingsContentProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -18,7 +18,7 @@ export interface TreeItem {
   icon?: React.ReactNode
   children?: TreeItem[]
   href?: string
-  type?: 'folder' | 'file' | 'classe' | 'cours' | 'note' | 'dashboard'
+  type?: 'folder' | 'file' | 'classe' | 'cours' | 'note' | 'dashboard' | 'settings'
 }
 
 interface TreeProps {
@@ -64,9 +64,14 @@ const TreeNode = React.forwardRef<HTMLDivElement, TreeNodeProps>(
     const nodeContent = (
       <div
         className={cn(
-          "flex items-center gap-2 py-1.5 px-3 rounded-md cursor-pointer hover:bg-accent/70 transition-all duration-200 group",
-          "text-sm relative border-l-2 border-transparent hover:border-accent",
-          isOpen && hasChildren && "bg-accent/30"
+          "flex items-center gap-2 py-1.5 px-3 cursor-pointer hover:bg-accent/70 transition-all duration-200 group",
+          "text-sm relative",
+          isOpen && hasChildren && "bg-accent/30",
+          // Styles pour les autres types
+          item.type === 'classe' && "font-semibold text-foreground",
+          item.type === 'cours' && "font-medium text-foreground/90",
+          item.type === 'dashboard' && "font-medium",
+          item.type === 'settings' && "font-medium border-b border-border mb-2 pb-3"
         )}
         style={{ paddingLeft: `${level * 12 + 12}px` }}
         onClick={handleClick}
@@ -86,15 +91,32 @@ const TreeNode = React.forwardRef<HTMLDivElement, TreeNodeProps>(
         )}
 
         {item.icon && (
-          <span className="flex items-center justify-center w-4 h-4 text-muted-foreground">
+          <span className={cn(
+            "flex items-center justify-center w-4 h-4",
+            item.type === 'note' ? "text-yellow-400 dark:text-yellow-300" : "text-muted-foreground"
+          )}>
             {item.icon}
           </span>
         )}
 
-        <span className="truncate flex-1 font-medium">{item.name}</span>
+        <span className={cn(
+          "truncate flex-1",
+          item.type === 'note' && "font-normal text-foreground/95",
+          item.type === 'classe' && "font-semibold",
+          item.type === 'cours' && "font-medium",
+          item.type === 'dashboard' && "font-medium",
+          item.type === 'settings' && "font-medium",
+        )}>
+          {item.name}
+        </span>
+
+        {/* Indicateur visuel pour les notes */}
+        {item.type === 'note' && (
+          <div className="w-2 h-2 rounded-full bg-yellow-400 dark:bg-yellow-400 opacity-600 transition-opacity" />
+        )}
 
         {/* Action buttons - simpler and more discrete */}
-        {isHovered && item.type !== 'dashboard' && (onEdit || onDelete) && (
+        {isHovered && item.type !== 'dashboard' && item.type !== 'settings' && (onEdit || onDelete) && (
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {onEdit && (
               <Button

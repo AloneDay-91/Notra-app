@@ -1,74 +1,63 @@
-import { Extension } from '@tiptap/core'
+'use client'
 
-const KeyboardShortcuts = Extension.create({
-  name: 'keyboardShortcuts',
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Keyboard, X } from "lucide-react"
 
-  addKeyboardShortcuts() {
-    return {
-      // Titres avec priorité élevée
-      'Mod-Alt-1': () => {
-        return this.editor.chain().focus().toggleHeading({ level: 1 }).run()
-      },
-      'Mod-Alt-2': () => {
-        return this.editor.chain().focus().toggleHeading({ level: 2 }).run()
-      },
-      'Mod-Alt-3': () => {
-        return this.editor.chain().focus().toggleHeading({ level: 3 }).run()
-      },
-      'Mod-Alt-4': () => {
-        return this.editor.chain().focus().toggleHeading({ level: 4 }).run()
-      },
-      'Mod-Alt-5': () => {
-        return this.editor.chain().focus().toggleHeading({ level: 5 }).run()
-      },
-      'Mod-Alt-6': () => {
-        return this.editor.chain().focus().toggleHeading({ level: 6 }).run()
-      },
+interface KeyboardShortcutsProps {
+  isVisible: boolean
+  onClose: () => void
+}
 
-      // Retour au paragraphe
-      'Mod-Alt-0': () => {
-        return this.editor.chain().focus().setParagraph().run()
-      },
+export default function KeyboardShortcuts({ isVisible, onClose }: KeyboardShortcutsProps) {
+  if (!isVisible) return null
 
-      // Listes
-      'Mod-Shift-8': () => {
-        return this.editor.chain().focus().toggleBulletList().run()
-      },
-      'Mod-Shift-7': () => {
-        return this.editor.chain().focus().toggleOrderedList().run()
-      },
-      'Mod-Shift-9': () => {
-        return this.editor.chain().focus().toggleTaskList().run()
-      },
+  const shortcuts = [
+    { keys: ['Ctrl', 'S'], description: 'Sauvegarder la note' },
+    { keys: ['Ctrl', 'P'], description: 'Basculer en mode aperçu' },
+    { keys: ['Ctrl', 'Shift', 'Enter'], description: 'Mode plein écran' },
+    { keys: ['Ctrl', 'B'], description: 'Texte en gras' },
+    { keys: ['Ctrl', 'I'], description: 'Texte en italique' },
+    { keys: ['Ctrl', 'U'], description: 'Texte souligné' },
+    { keys: ['Ctrl', 'Z'], description: 'Annuler' },
+    { keys: ['Ctrl', 'Y'], description: 'Refaire' },
+    { keys: ['/'], description: 'Commandes rapides' },
+    { keys: ['Ctrl', 'Alt', '1'], description: 'Titre 1' },
+    { keys: ['Ctrl', 'Alt', '2'], description: 'Titre 2' },
+    { keys: ['Ctrl', 'Alt', '3'], description: 'Titre 3' },
+  ]
 
-      // Formatage
-      'Mod-u': () => {
-        return this.editor.chain().focus().toggleUnderline().run()
-      },
-      'Mod-Shift-h': () => {
-        return this.editor.chain().focus().toggleHighlight().run()
-      },
-
-      // Blocs
-      'Mod-Shift-b': () => {
-        return this.editor.chain().focus().toggleBlockquote().run()
-      },
-      'Mod-Alt-c': () => {
-        return this.editor.chain().focus().toggleCodeBlock().run()
-      },
-
-      // Alignement
-      'Mod-Shift-l': () => {
-        return this.editor.chain().focus().setTextAlign('left').run()
-      },
-      'Mod-Shift-e': () => {
-        return this.editor.chain().focus().setTextAlign('center').run()
-      },
-      'Mod-Shift-r': () => {
-        return this.editor.chain().focus().setTextAlign('right').run()
-      },
-    }
-  },
-})
-
-export default KeyboardShortcuts
+  return (
+    <Card className="fixed bottom-4 right-4 w-80 z-40 shadow-lg border bg-background/95 backdrop-blur animate-in slide-in-from-bottom-2">
+      <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <Keyboard className="h-4 w-4" />
+          Raccourcis clavier
+        </CardTitle>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="h-6 w-6 p-0"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {shortcuts.map((shortcut, index) => (
+          <div key={index} className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">{shortcut.description}</span>
+            <div className="flex gap-1">
+              {shortcut.keys.map((key, keyIndex) => (
+                <Badge key={keyIndex} variant="outline" className="text-xs px-1 py-0">
+                  {key}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  )
+}

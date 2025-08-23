@@ -42,26 +42,26 @@ export default function DashboardContent({ user, recentNotes }: DashboardContent
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      {/* Welcome Header */}
+    <div className="w-full max-w-2xl mx-auto space-y-6 lg:space-y-8">
+      {/* Welcome Header - responsive */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-2xl lg:text-3xl font-bold">
           Bienvenue, {user.name?.split(" ")[0] || "utilisateur"}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm lg:text-base text-muted-foreground">
           Organisez vos cours et prenez des notes facilement
         </p>
       </div>
 
-      {/* Quick Action Button */}
+      {/* Quick Action Button - responsive */}
       <div className="text-center">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 w-full sm:w-auto">
               Créer une nouvelle classe
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="mx-4 max-w-md">
             <DialogHeader>
               <DialogTitle>Créer une nouvelle classe</DialogTitle>
               <DialogDescription>
@@ -75,11 +75,11 @@ export default function DashboardContent({ user, recentNotes }: DashboardContent
         </Dialog>
       </div>
 
-      {/* Recent Notes */}
+      {/* Recent Notes - responsive */}
       <Card>
         <CardHeader>
-          <CardTitle>Notes récentes</CardTitle>
-          <CardDescription>Vos dernières modifications</CardDescription>
+          <CardTitle className="text-lg lg:text-xl">Notes récentes</CardTitle>
+          <CardDescription className="text-sm">Vos dernières modifications</CardDescription>
         </CardHeader>
         <CardContent>
           {recentNotes.length > 0 ? (
@@ -100,7 +100,7 @@ export default function DashboardContent({ user, recentNotes }: DashboardContent
               ))}
             </div>
           ) : (
-            <div className="text-center py-6 text-muted-foreground">
+            <div className="text-center py-8 lg:py-12 text-muted-foreground">
               <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
               <p className="text-sm">Aucune note pour le moment</p>
               <p className="text-xs mt-1">

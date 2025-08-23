@@ -48,8 +48,8 @@ export default async function DashboardLayout({
       }}
       navigationData={navigationData}
     >
-      {/* Top Bar */}
-      <header className="flex items-center justify-between px-6 py-3 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Top Bar - Hidden on mobile, shown on desktop */}
+      <header className="hidden lg:flex items-center justify-between px-6 py-3 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" className="lg:hidden">
             <Menu className="h-4 w-4" />
@@ -62,9 +62,9 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      {/* Page Content */}
+      {/* Page Content - Responsive padding */}
       <main className="flex-1 overflow-hidden">
-        <div className="h-full p-6">{children}</div>
+        <div className="h-full p-3 sm:p-4 lg:p-6">{children}</div>
       </main>
     </DashboardLayoutClient>
   );

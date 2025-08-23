@@ -48,6 +48,7 @@ export default function NoteEditor({ note }: NoteEditorProps) {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
 
   const debouncedContent = useDebounce(content, 1000);
   const debouncedTitle = useDebounce(title, 1000);
@@ -59,7 +60,6 @@ export default function NoteEditor({ note }: NoteEditorProps) {
           levels: [1, 2, 3, 4, 5, 6],
         },
       }),
-      KeyboardShortcuts, // Placer les raccourcis tôt pour qu'ils aient la priorité
       Markdown,
       Underline,
       Highlight.configure({
@@ -91,7 +91,7 @@ export default function NoteEditor({ note }: NoteEditorProps) {
     content: content,
     editorProps: {
       attributes: {
-        class: `focus:outline-none min-h-[600px] px-6 py-4 ${isFullscreen ? 'min-h-[calc(100vh-200px)]' : ''}`,
+        class: `focus:outline-none px-6 py-4 ${isFullscreen ? 'min-h-[calc(100vh-200px)]' : 'min-h-full'}`,
       },
     },
     onUpdate: ({ editor }) => {
@@ -178,134 +178,151 @@ export default function NoteEditor({ note }: NoteEditorProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [title, content, isPreviewMode, isFullscreen, saveNote]);
 
-  const StatusBadge = () => {
-    switch (status) {
-      case 'saving':
-        return (
-          <Badge variant="secondary" className="gap-1.5 text-xs">
-            <Loader2 className="h-3 w-3 animate-spin" />
-            Sauvegarde...
-          </Badge>
-        );
-      case 'saved':
-        return (
-          <Badge variant="default" className="gap-1.5 text-xs">
-            <Save className="h-3 w-3" />
-            Sauvegardé
-            {lastSaved && (
-              <span className="text-xs opacity-70">
-                • {lastSaved.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            )}
-          </Badge>
-        );
-      case 'error':
-        return (
-          <Badge variant="destructive" className="gap-1.5 text-xs">
-            <AlertCircle className="h-3 w-3" />
-            Erreur
-          </Badge>
-        );
-    }
+  // Handlers pour les événements
+  const handleTitleBlur = () => {
+    saveNote(title, content);
   };
 
-  const StatsBar = () => (
-    <div className="flex items-center gap-4 text-xs text-muted-foreground border-t bg-muted/20 px-6 py-2">
-      <div className="flex items-center gap-1">
-        <FileText className="h-3 w-3" />
-        {wordCount} mots
-      </div>
-      <div>{charCount} caractères</div>
-      {lastSaved && (
-        <div className="flex items-center gap-1">
-          <Clock className="h-3 w-3" />
-          Dernière modification: {lastSaved.toLocaleString('fr-FR')}
-        </div>
-      )}
-    </div>
-  );
+  const handleManualSave = () => {
+    saveNote(title, content);
+  };
 
   return (
-    <div className={`h-full flex flex-col bg-background ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}>
-      {/* Enhanced Title Input */}
-      <div className="px-6 pt-6 pb-4">
-        <div className="relative">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Titre de la note..."
-            className="text-4xl font-bold w-full focus:outline-none bg-transparent
-                     placeholder:text-muted-foreground/30 border-none resize-none
-                     hover:bg-muted/10 focus:bg-muted/20 rounded-lg px-3 py-2 -mx-3 -my-2
-                     transition-colors duration-200"
-            style={{ lineHeight: '1.2' }}
-          />
-        </div>
-      </div>
-
-      {/* Enhanced Toolbar */}
-      <div className="px-6 pb-4">
-        <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/20">
-          <div className="flex items-center gap-2">
-            <EditorToolbar editor={editor} />
+    <div className={`h-full flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-background' : ''}`}>
+      {/* Header responsive avec titre */}
+      <div className="flex-shrink-0 border-b bg-background">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4">
+          <div className="flex-1 min-w-0">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full text-lg sm:text-xl lg:text-2xl font-bold bg-transparent border-none outline-none focus:ring-0 p-0 placeholder:text-muted-foreground truncate"
+              placeholder="Titre de la note..."
+              onBlur={handleTitleBlur}
+            />
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Actions compactes sur mobile */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Status indicator - masqué sur très petits écrans */}
+            <div className="hidden sm:flex items-center gap-2">
+              {status === 'saving' && (
+                <Badge variant="secondary" className="gap-1">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span className="hidden lg:inline">Sauvegarde...</span>
+                </Badge>
+              )}
+              {status === 'saved' && lastSaved && (
+                <Badge variant="outline" className="gap-1">
+                  <Clock className="w-3 h-3" />
+                  <span className="hidden lg:inline">
+                    {lastSaved.toLocaleTimeString('fr-FR', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </Badge>
+              )}
+              {status === 'error' && (
+                <Badge variant="destructive" className="gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  <span className="hidden lg:inline">Erreur</span>
+                </Badge>
+              )}
+            </div>
+
+            {/* Boutons d'action - responsive */}
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setIsPreviewMode(!isPreviewMode)}
-              className="h-7 px-2"
+              className="gap-1"
             >
-              {isPreviewMode ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+              {isPreviewMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              <span className="hidden sm:inline">{isPreviewMode ? 'Éditer' : 'Aperçu'}</span>
             </Button>
 
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="h-7 px-2"
+              className="gap-1"
             >
-              {isFullscreen ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              <span className="hidden lg:inline">{isFullscreen ? 'Réduire' : 'Plein écran'}</span>
             </Button>
 
+            {/* Bouton de sauvegarde manuelle sur mobile */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleManualSave}
+              disabled={status === 'saving'}
+              className="sm:hidden gap-1"
+            >
+              {status === 'saving' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Toolbar - responsive avec scroll horizontal sur mobile */}
+        {!isPreviewMode && (
+          <div className="border-t">
+            <div className="overflow-x-auto">
+              <EditorToolbar editor={editor} />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Éditeur principal - responsive */}
+      <div className="flex-1 min-h-0 overflow-hidden">
+        {isPreviewMode ? (
+          <div className="h-full overflow-y-auto p-3 sm:p-4 lg:p-6 pb-16">
+            <div className="prose prose-sm sm:prose lg:prose-lg max-w-none dark:prose-invert">
+              <div dangerouslySetInnerHTML={{ __html: editor?.getHTML() || '' }} />
+            </div>
+          </div>
+        ) : (
+          <div className="h-full overflow-y-auto relative">
+            <EditorContent
+              editor={editor}
+              className="prose prose-sm sm:prose lg:prose-lg max-w-none dark:prose-invert p-3 sm:p-4 lg:p-6 pb-16 focus:outline-none"
+            />
+
+            {/* Raccourcis clavier - contrôlés par un bouton */}
+            <KeyboardShortcuts
+              isVisible={showKeyboardShortcuts}
+              onClose={() => setShowKeyboardShortcuts(false)}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Stats fixées en bas de l'écran */}
+      <div className="fixed bottom-0 left-0 right-0 px-3 sm:px-4 py-2 bg-background/95 backdrop-blur-sm border-t shadow-lg z-30">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1">
+              <FileText className="w-3 h-3" />
+              {wordCount} mots
+            </span>
+            <span className="hidden sm:inline">{charCount} caractères</span>
+          </div>
+          <div className="hidden sm:flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => toast.info('Raccourcis clavier :\n- Cmd/Ctrl + S : Sauvegarder\n- Cmd/Ctrl + P : Prévisualiser\n- Shift + Enter : Basculer le mode plein écran', { duration: 5000 })}
-              className="h-7 px-2"
+              onClick={() => setShowKeyboardShortcuts(!showKeyboardShortcuts)}
+              className="gap-1 text-xs"
             >
-              <Keyboard className="h-3 w-3" />
+              <Keyboard className="w-3 h-3" />
+              <span>Raccourcis</span>
             </Button>
-
-            <div className="h-4 w-px bg-border mx-1" />
-
-            <StatusBadge />
           </div>
         </div>
       </div>
-
-      {/* Editor Content */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full overflow-y-auto relative">
-          {isPreviewMode ? (
-            <div className="px-6 py-4">
-              <div
-                className="prose dark:prose-invert max-w-none prose-sm sm:prose-base lg:prose-lg xl:prose-xl prose-headings:scroll-mt-20 prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:leading-7 prose-li:leading-7 prose-blockquote:border-l-4 prose-blockquote:border-primary/30 prose-blockquote:pl-4 prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-muted prose-pre:border prose-pre:rounded-lg prose-img:rounded-lg prose-img:shadow-lg"
-                dangerouslySetInnerHTML={{ __html: editor?.getHTML() || '' }}
-              />
-            </div>
-          ) : (
-            <div className="relative h-full">
-              <EditorContent editor={editor} className="h-full relative z-10" />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Stats Bar */}
-      <StatsBar />
     </div>
   );
 }

@@ -25,15 +25,16 @@ export default function EditorToolbar({ editor }: ToolbarProps) {
   }
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
-      {/* Undo/Redo */}
-      <div className="flex items-center gap-1 mr-2">
+    <div className="flex items-center gap-1 p-2 overflow-x-auto min-w-max">
+      {/* Undo/Redo - toujours visibles */}
+      <div className="flex items-center gap-1 mr-2 flex-shrink-0">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
           className="h-8 w-8 p-0"
+          title="Annuler"
         >
           <Undo className="h-4 w-4" />
         </Button>
@@ -43,25 +44,80 @@ export default function EditorToolbar({ editor }: ToolbarProps) {
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
           className="h-8 w-8 p-0"
+          title="Refaire"
         >
           <Redo className="h-4 w-4" />
         </Button>
       </div>
 
-      {/* Text Style */}
+      {/* Séparateur */}
+      <div className="w-px h-6 bg-border mx-1 flex-shrink-0" />
+
+      {/* Formatage du texte - compacte sur mobile */}
+      <div className="flex items-center gap-1 flex-shrink-0">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('bold')}
+          onPressedChange={() => editor.chain().focus().toggleBold().run()}
+          className="h-8 w-8 p-0"
+          title="Gras"
+        >
+          <Bold className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('italic')}
+          onPressedChange={() => editor.chain().focus().toggleItalic().run()}
+          className="h-8 w-8 p-0"
+          title="Italique"
+        >
+          <Italic className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('underline')}
+          onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
+          className="h-8 w-8 p-0"
+          title="Souligné"
+        >
+          <Underline className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('strike')}
+          onPressedChange={() => editor.chain().focus().toggleStrike().run()}
+          className="h-8 w-8 p-0"
+          title="Barré"
+        >
+          <Strikethrough className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('highlight')}
+          onPressedChange={() => editor.chain().focus().toggleHighlight().run()}
+          className="h-8 w-8 p-0"
+          title="Surligné"
+        >
+          <Highlighter className="h-4 w-4" />
+        </Toggle>
+      </div>
+
+      {/* Séparateur */}
+      <div className="w-px h-6 bg-border mx-1 flex-shrink-0" />
+
+      {/* Titres - dropdown compact sur mobile */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-8 px-3">
-            <Type className="h-4 w-4 mr-1" />
-            Texte
+          <Button variant="ghost" size="sm" className="h-8 px-2 flex-shrink-0">
+            <Type className="h-4 w-4" />
+            <span className="hidden sm:ml-1 sm:inline">Style</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent align="start">
           <DropdownMenuItem
             onClick={() => editor.chain().focus().setParagraph().run()}
             className={editor.isActive('paragraph') ? 'bg-accent' : ''}
           >
-            <Type className="h-4 w-4 mr-2" />
             Paragraphe
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -88,57 +144,17 @@ export default function EditorToolbar({ editor }: ToolbarProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Format Text */}
-      <div className="flex items-center gap-1 mx-2">
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('bold')}
-          onPressedChange={() => editor.chain().focus().toggleBold().run()}
-          className="h-8 w-8 p-0"
-        >
-          <Bold className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('italic')}
-          onPressedChange={() => editor.chain().focus().toggleItalic().run()}
-          className="h-8 w-8 p-0"
-        >
-          <Italic className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('underline')}
-          onPressedChange={() => editor.chain().focus().toggleUnderline().run()}
-          className="h-8 w-8 p-0"
-        >
-          <Underline className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('strike')}
-          onPressedChange={() => editor.chain().focus().toggleStrike().run()}
-          className="h-8 w-8 p-0"
-        >
-          <Strikethrough className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('highlight')}
-          onPressedChange={() => editor.chain().focus().toggleHighlight().run()}
-          className="h-8 w-8 p-0"
-        >
-          <Highlighter className="h-4 w-4" />
-        </Toggle>
-      </div>
+      {/* Séparateur */}
+      <div className="w-px h-6 bg-border mx-1 flex-shrink-0" />
 
-      {/* Lists */}
-      <div className="flex items-center gap-1 mx-2">
+      {/* Listes - essentielles, toujours visibles */}
+      <div className="flex items-center gap-1 flex-shrink-0">
         <Toggle
           size="sm"
           pressed={editor.isActive('bulletList')}
           onPressedChange={() => editor.chain().focus().toggleBulletList().run()}
           className="h-8 w-8 p-0"
+          title="Liste à puces"
         >
           <List className="h-4 w-4" />
         </Toggle>
@@ -147,6 +163,7 @@ export default function EditorToolbar({ editor }: ToolbarProps) {
           pressed={editor.isActive('orderedList')}
           onPressedChange={() => editor.chain().focus().toggleOrderedList().run()}
           className="h-8 w-8 p-0"
+          title="Liste numérotée"
         >
           <ListOrdered className="h-4 w-4" />
         </Toggle>
@@ -155,18 +172,21 @@ export default function EditorToolbar({ editor }: ToolbarProps) {
           pressed={editor.isActive('taskList')}
           onPressedChange={() => editor.chain().focus().toggleTaskList().run()}
           className="h-8 w-8 p-0"
+          title="Liste de tâches"
         >
           <ListTodo className="h-4 w-4" />
         </Toggle>
       </div>
 
-      {/* Blocks */}
-      <div className="flex items-center gap-1">
+      {/* Autres éléments - masqués sur très petits écrans */}
+      <div className="hidden sm:flex items-center gap-1 ml-1 flex-shrink-0">
+        <div className="w-px h-6 bg-border mx-1" />
         <Toggle
           size="sm"
           pressed={editor.isActive('blockquote')}
           onPressedChange={() => editor.chain().focus().toggleBlockquote().run()}
           className="h-8 w-8 p-0"
+          title="Citation"
         >
           <Quote className="h-4 w-4" />
         </Toggle>
@@ -175,6 +195,7 @@ export default function EditorToolbar({ editor }: ToolbarProps) {
           pressed={editor.isActive('codeBlock')}
           onPressedChange={() => editor.chain().focus().toggleCodeBlock().run()}
           className="h-8 w-8 p-0"
+          title="Bloc de code"
         >
           <Code className="h-4 w-4" />
         </Toggle>

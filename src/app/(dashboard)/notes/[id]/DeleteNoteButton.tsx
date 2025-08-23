@@ -17,9 +17,10 @@ import { toast } from "sonner"
 interface DeleteNoteButtonProps {
   noteId: string
   noteTitle: string
+  variant?: 'button' | 'menuItem'
 }
 
-export default function DeleteNoteButton({ noteId, noteTitle }: DeleteNoteButtonProps) {
+export default function DeleteNoteButton({ noteId, noteTitle, variant = 'button' }: DeleteNoteButtonProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -47,6 +48,51 @@ export default function DeleteNoteButton({ noteId, noteTitle }: DeleteNoteButton
     setIsDeleting(false)
   }
 
+  // Rendu pour la variante menuItem
+  if (variant === 'menuItem') {
+    return (
+      <>
+        <div
+          className="flex items-center gap-2 w-full cursor-pointer text-destructive"
+          onClick={() => setIsOpen(true)}
+        >
+          <Trash2 className="h-4 w-4" />
+          <span>Supprimer</span>
+        </div>
+
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Supprimer la note</DialogTitle>
+              <DialogDescription>
+                Êtes-vous sûr de vouloir supprimer &quot;{noteTitle}&quot; ? Cette action est irréversible.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                disabled={isDeleting}
+                className="w-full sm:w-auto"
+              >
+                Annuler
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="w-full sm:w-auto"
+              >
+                {isDeleting ? "Suppression..." : "Supprimer"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    )
+  }
+
+  // Rendu pour la variante button (par défaut)
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -61,11 +107,12 @@ export default function DeleteNoteButton({ noteId, noteTitle }: DeleteNoteButton
             Êtes-vous sûr de vouloir supprimer &quot;{noteTitle}&quot; ? Cette action est irréversible.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-end gap-2 mt-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
           <Button
             variant="outline"
             onClick={() => setIsOpen(false)}
             disabled={isDeleting}
+            className="w-full sm:w-auto"
           >
             Annuler
           </Button>
@@ -73,6 +120,7 @@ export default function DeleteNoteButton({ noteId, noteTitle }: DeleteNoteButton
             variant="destructive"
             onClick={handleDelete}
             disabled={isDeleting}
+            className="w-full sm:w-auto"
           >
             {isDeleting ? "Suppression..." : "Supprimer"}
           </Button>

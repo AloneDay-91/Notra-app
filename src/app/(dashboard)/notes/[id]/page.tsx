@@ -4,9 +4,16 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import NoteEditor from "./NoteEditor";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, User } from "lucide-react";
+import { ArrowLeft, Calendar, User, MoreVertical } from "lucide-react";
 import DeleteNoteButton from "./DeleteNoteButton";
 import { ExportMarkdown } from "@/components/ExportMarkdown";
+import { BreadcrumbMobile } from "@/components/ui/breadcrumb-mobile";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 async function getNoteDetails(noteId: string, userId: string) {
   const note = await prisma.note.findFirst({
@@ -55,49 +62,75 @@ export default async function NotePage({ params }: { params: { id: string } }) {
     );
   }
 
+  const breadcrumbItems = [
+    { label: "Accueil", href: "/dashboard" },
+    { label: note.cours.classe.name, href: `/classes/${note.cours.classe.id}` },
+    { label: note.cours.name, href: `/cours/${note.cours.id}` },
+    { label: note.title, isActive: true },
+  ];
+
   return (
-    <div className="h-full flex flex-col">
-      {/* Breadcrumb */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Link href="/dashboard" className="hover:text-foreground transition-colors">
-            Accueil
-          </Link>
-          <span>/</span>
-          <span>{note.cours.classe.name}</span>
-          <span>/</span>
-          <span>{note.cours.name}</span>
-          <span>/</span>
-          <span className="text-foreground font-medium truncate max-w-[200px]">
-            {note.title}
-          </span>
-        </div>
+    <div className="h-screen flex flex-col">
+      {/* Header Mobile/Desktop */}
+      <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b z-10">
+        <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
+          {/* Breadcrumb */}
+          <BreadcrumbMobile items={breadcrumbItems} />
 
-        {/* Actions */}
-        <div className="flex items-center gap-2">
-          <ExportMarkdown noteId={note.id} variant="compact" />
-          <DeleteNoteButton noteId={note.id} noteTitle={note.title} />
-        </div>
-      </div>
+          {/* Actions - Responsive */}
+          <div className="flex items-center justify-between">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-xl font-semibold truncate">
+                {note.title}
+              </h1>
+            </div>
 
-      {/* Note Metadata */}
-      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-6 pb-4 border-b">
-        <div className="flex items-center gap-1">
-          <Calendar className="h-3 w-3" />
-          Modifié le {new Date(note.updatedAt).toLocaleDateString('fr-FR', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-          })}
-        </div>
-        <div className="flex items-center gap-1">
-          <User className="h-3 w-3" />
-          {session.user.name || session.user.email}
+            {/* Actions Desktop */}
+            <div className="hidden sm:flex items-center gap-2">
+              <ExportMarkdown noteId={note.id} variant="compact" />
+              <DeleteNoteButton noteId={note.id} noteTitle={note.title} />
+            </div>
+
+            {/* Actions Mobile - Menu déroulant */}
+            <div className="sm:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <ExportMarkdown noteId={note.id} variant="menuItem" />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <DeleteNoteButton noteId={note.id} noteTitle={note.title} variant="menuItem" />
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          {/* Note Metadata - Responsive */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Calendar className="h-3 w-3 flex-shrink-0" />
+              <span>Modifié le {new Date(note.updatedAt).toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              })}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <User className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{session.user.name || session.user.email}</span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Editor */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 p-3 sm:p-4">
         <NoteEditor note={note} />
       </div>
     </div>
