@@ -98,7 +98,7 @@ export default function AuthForm() {
                     Email
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-3 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       name="email"
@@ -116,7 +116,7 @@ export default function AuthForm() {
                     Mot de passe
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-3 w-4 text-muted-foreground" />
                     <Input
                       id="password"
                       name="password"
@@ -129,10 +129,10 @@ export default function AuthForm() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                      className="absolute right-3 top-3 w-4 text-muted-foreground hover:text-foreground transition-colors"
                       disabled={isSignInLoading}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? <EyeOff className=" w-4" /> : <Eye className="w-4" />}
                     </button>
                   </div>
                 </div>
@@ -175,7 +175,7 @@ export default function AuthForm() {
                     Email
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-3 w-4 text-muted-foreground" />
                     <Input
                       id="email-signup"
                       name="email"
@@ -193,7 +193,7 @@ export default function AuthForm() {
                     Mot de passe
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-3 w-4 text-muted-foreground" />
                     <Input
                       id="password-signup"
                       name="password"
@@ -207,10 +207,10 @@ export default function AuthForm() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+                      className="absolute right-3 top-3 w-4 text-muted-foreground hover:text-foreground transition-colors"
                       disabled={isSignUpLoading}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? <EyeOff className=" w-4" /> : <Eye className=" w-4" />}
                     </button>
                   </div>
                   <p className="text-xs text-muted-foreground">
